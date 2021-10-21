@@ -1,0 +1,80 @@
+/*
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
+ * Copyright (c) 2019 Western Digital Corporation or its affiliates.
+ *
+ * Authors:
+ *   Damien Le Moal <damien.lemoal@wdc.com>
+ */
+
+/dts-v1/;
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	model = "YuQuan Alpha SoC";
+	compatible = "riscv,yuquan";
+
+	chosen {
+        // bootargs = "earlycon=ttyS0";
+		linux,stdout-path = &uart0;
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x8000000>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <100000000>;
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatible = "riscv";
+			clock-frequency = <100000000>;
+			i-cache-size = <4096>;
+			d-cache-size = <4096>;
+			mmu-type = "riscv,sv39";
+			reg = <0>;
+			riscv,isa = "rv64ima";
+			status = "okay";
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+		interrupt-parent = <&plic>;
+
+		plic: interrupt-controller@c000000 {
+			#interrupt-cells = <1>;
+			compatible = "sifive,plic-1.0.0";
+			riscv,ndev = <56>;
+			interrupt-controller;
+			interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>; // machine/supervisor external interrupt
+			reg = <0xc000000 0x4000000>;
+		};
+
+		uart0: uart0@10000000 {
+			compatible = "ns16550";
+			interrupts = <10>;
+			interrupt-parent = <&plic>;
+			current-speed = <115200>;
+			clock-frequency = <100000000>;
+			reg = <0x10000000 0x1000>;
+		};
+
+		clint: clint@2000000 {
+			compatible = "sifive,clint0";
+			interrupts-extended = <&cpu0_intc 7 &cpu0_intc 3>; // machine timer/software interrupt
+			reg = <0x2000000 0x10000>;
+		};
+	};
+};

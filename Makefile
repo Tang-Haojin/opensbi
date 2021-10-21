@@ -76,22 +76,26 @@ OPENSBI_VERSION_MINOR=`grep "define OPENSBI_VERSION_MINOR" $(include_dir)/sbi/sb
 OPENSBI_VERSION_GIT=$(shell if [ -d $(src_dir)/.git ]; then git describe 2> /dev/null; fi)
 
 # Setup compilation commands
+CROSS_COMPILE ?= riscv64-unknown-linux-gnu-
 ifneq ($(LLVM),)
 CC		=	clang
 AR		=	llvm-ar
 LD		=	ld.lld
 OBJCOPY		=	llvm-objcopy
+OBJDUMP		=	llvm-objdump
 else
 ifdef CROSS_COMPILE
 CC		=	$(CROSS_COMPILE)gcc
 AR		=	$(CROSS_COMPILE)ar
 LD		=	$(CROSS_COMPILE)ld
 OBJCOPY		=	$(CROSS_COMPILE)objcopy
+OBJDUMP		=	$(CROSS_COMPILE)objdump
 else
 CC		?=	gcc
 AR		?=	ar
 LD		?=	ld
 OBJCOPY		?=	objcopy
+OBJDUMP		?=	objdump
 endif
 endif
 CPP		=	$(CC) -E
@@ -198,6 +202,7 @@ platform-objs-path-y=$(foreach obj,$(platform-objs-y),$(platform_build_dir)/$(ob
 firmware-bins-path-y=$(foreach bin,$(firmware-bins-y),$(platform_build_dir)/firmware/$(bin))
 endif
 firmware-elfs-path-y=$(firmware-bins-path-y:.bin=.elf)
+firmware-asms-path-y=$(firmware-bins-path-y:.bin=.asm)
 firmware-objs-path-y=$(firmware-bins-path-y:.bin=.o)
 
 # Setup list of deps files for objects
@@ -379,6 +384,9 @@ compile_ar = $(CMD_PREFIX)mkdir -p `dirname $(1)`; \
 compile_objcopy = $(CMD_PREFIX)mkdir -p `dirname $(1)`; \
 	     echo " OBJCOPY   $(subst $(build_dir)/,,$(1))"; \
 	     $(OBJCOPY) -S -O binary $(2) $(1)
+compile_objdump = $(CMD_PREFIX)mkdir -p `dirname $(1)`; \
+	     echo " OBJDUMP   $(subst $(build_dir)/,,$(1))"; \
+	     $(OBJDUMP) -S $(2) >$(1)
 compile_dts = $(CMD_PREFIX)mkdir -p `dirname $(1)`; \
 	     echo " DTC       $(subst $(build_dir)/,,$(1))"; \
 	     $(CPP) $(DTSCPPFLAGS) $(2) | $(DTC) -O dtb -i `dirname $(2)` -o $(1)
@@ -398,6 +406,7 @@ ifdef PLATFORM
 targets-y += $(platform_build_dir)/lib/libplatsbi.a
 endif
 targets-y += $(firmware-bins-path-y)
+#targets-y += $(firmware-asms-path-y)
 
 # Default rule "make" should always be first rule
 .PHONY: all
@@ -432,8 +441,11 @@ $(build_dir)/%.dep: $(src_dir)/%.S
 $(build_dir)/%.o: $(src_dir)/%.S
 	$(call compile_as,$@,$<)
 
-$(platform_build_dir)/%.bin: $(platform_build_dir)/%.elf
+$(platform_build_dir)/%.bin: $(platform_build_dir)/%.elf $(platform_build_dir)/%.asm
 	$(call compile_objcopy,$@,$<)
+
+$(platform_build_dir)/%.asm: $(platform_build_dir)/%.elf
+	$(call compile_objdump,$@,$<)
 
 $(platform_build_dir)/%.elf: $(platform_build_dir)/%.o $(platform_build_dir)/%.elf.ld $(platform_build_dir)/lib/libplatsbi.a
 	$(call compile_elf,$@,$@.ld,$< $(platform_build_dir)/lib/libplatsbi.a)
@@ -544,6 +556,7 @@ install_libplatsbi: $(platform_build_dir)/lib/libplatsbi.a $(build_dir)/lib/libs
 .PHONY: install_firmwares
 install_firmwares: $(platform_build_dir)/lib/libplatsbi.a $(build_dir)/lib/libsbi.a $(build_dir)/lib/libsbiutils.a $(firmware-bins-path-y)
 	$(call inst_file_list,$(install_root_dir),$(build_dir),$(install_firmware_path)/$(platform_subdir)/firmware,$(firmware-elfs-path-y))
+	$(call inst_file_list,$(install_root_dir),$(build_dir),$(install_firmware_path)/$(platform_subdir)/firmware,$(firmware-asms-path-y))
 	$(call inst_file_list,$(install_root_dir),$(build_dir),$(install_firmware_path)/$(platform_subdir)/firmware,$(firmware-bins-path-y))
 
 .PHONY: install_docs
@@ -562,6 +575,8 @@ clean:
 	$(CMD_PREFIX)find $(build_dir) -type f -name "*.elf" -exec rm -rf {} +
 	$(if $(V), @echo " RM        $(build_dir)/*.bin")
 	$(CMD_PREFIX)find $(build_dir) -type f -name "*.bin" -exec rm -rf {} +
+	$(if $(V), @echo " RM        $(build_dir)/*.asm")
+	$(CMD_PREFIX)find $(build_dir) -type f -name "*.asm" -exec rm -rf {} +
 	$(if $(V), @echo " RM        $(build_dir)/*.dtb")
 	$(CMD_PREFIX)find $(build_dir) -type f -name "*.dtb" -exec rm -rf {} +
 
