@@ -15,7 +15,7 @@
 	compatible = "riscv,yuquan";
 
 	chosen {
-        // bootargs = "earlycon=ttyS0";
+        // bootargs = "earlycon=sbi";
 		linux,stdout-path = &uart0;
 	};
 
@@ -36,7 +36,7 @@
 			d-cache-size = <4096>;
 			mmu-type = "riscv,sv39";
 			reg = <0>;
-			riscv,isa = "rv64ima";
+			riscv,isa = "rv64imac";
 			status = "okay";
 			cpu0_intc: interrupt-controller {
 				#interrupt-cells = <1>;
