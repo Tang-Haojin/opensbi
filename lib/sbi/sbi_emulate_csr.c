@@ -11,6 +11,7 @@
 #include <sbi/riscv_encoding.h>
 #include <sbi/sbi_bitops.h>
 #include <sbi/sbi_console.h>
+#include <sbi/sbi_fp_emulation.h>
 #include <sbi/sbi_emulate_csr.h>
 #include <sbi/sbi_error.h>
 #include <sbi/sbi_hart.h>
@@ -106,6 +107,23 @@ int sbi_emulate_csr_read(int csr_num, struct sbi_trap_regs *regs,
 		*csr_val = csr_read(CSR_MINSTRETH);
 		break;
 #endif
+#if !defined(__riscv_flen) && defined(SBI_ENABLE_FP_EMULATION)
+	case CSR_FRM:
+		if ((regs->mstatus & MSTATUS_FS) == 0)
+			break;
+		*csr_val = GET_FRM();
+		return 0;
+	case CSR_FFLAGS:
+		if ((regs->mstatus & MSTATUS_FS) == 0)
+			break;
+		*csr_val = GET_FFLAGS();
+		return 0;
+	case CSR_FCSR:
+		if ((regs->mstatus & MSTATUS_FS) == 0)
+			break;
+		*csr_val = GET_FCSR();
+		return 0;
+#endif
 
 #define switchcase_hpm(__uref, __mref, __csr)				\
 	case __csr:							\
@@ -183,6 +201,17 @@ int sbi_emulate_csr_write(int csr_num, struct sbi_trap_regs *regs,
 		else
 			ret = SBI_ENOTSUPP;
 		break;
+#endif
+#if !defined(__riscv_flen) && defined(SBI_ENABLE_FP_EMULATION)
+    case CSR_FRM:
+	    SET_FRM(csr_val);
+	    return 0;
+    case CSR_FFLAGS:
+	    SET_FFLAGS(csr_val);
+	    return 0;
+    case CSR_FCSR:
+	    SET_FCSR(csr_val);
+	    return 0;
 #endif
 	default:
 		ret = SBI_ENOTSUPP;

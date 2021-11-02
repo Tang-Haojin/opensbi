@@ -689,6 +689,15 @@
 #define INSN_16BIT_MASK			0x3
 #define INSN_32BIT_MASK			0x1c
 
+#define MATCH_FMV_X_W           0xe0000053
+#define MATCH_FCLASS_S          0xe0001053
+#define MATCH_FMV_X_D           0xe2000053
+#define MATCH_FCLASS_D          0xe2001053
+#define MASK_FMV_W_X            0xfff0707f
+#define MATCH_FMV_W_X           0xf0000053
+#define MASK_FMV_D_X            0xfff0707f
+#define MATCH_FMV_D_X           0xf2000053
+
 #define INSN_IS_16BIT(insn)		\
 	(((insn) & INSN_16BIT_MASK) != INSN_16BIT_MASK)
 #define INSN_IS_32BIT(insn)		\

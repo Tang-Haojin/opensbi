@@ -103,7 +103,7 @@
 /** Get offset of member with name 'x' in sbi_trap_regs */
 #define SBI_TRAP_REGS_OFFSET(x) ((SBI_TRAP_REGS_##x) * __SIZEOF_POINTER__)
 /** Size (in bytes) of sbi_trap_regs */
-#define SBI_TRAP_REGS_SIZE SBI_TRAP_REGS_OFFSET(last)
+#define SBI_TRAP_REGS_SIZE (SBI_TRAP_REGS_OFFSET(last) + 32 * __SIZEOF_POINTER__)
 
 /** Get offset of member with name 'x' in sbi_trap_info */
 #define SBI_TRAP_INFO_OFFSET(x) ((SBI_TRAP_INFO_##x) * __SIZEOF_POINTER__)

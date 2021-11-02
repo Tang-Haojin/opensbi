@@ -10,6 +10,8 @@
 #ifndef __RISCV_FP_H__
 #define __RISCV_FP_H__
 
+#ifdef __riscv_flen
+
 #include <sbi/riscv_asm.h>
 #include <sbi/riscv_encoding.h>
 #include <sbi/sbi_types.h>
@@ -18,8 +20,6 @@
 #define GET_RM(insn) (((insn) >> 12) & 7)
 #define PRECISION_S 0
 #define PRECISION_D 1
-
-#ifdef __riscv_flen
 
 #define GET_F32_REG(insn, pos, regs)                                                                    \
 	({                                                                                              \

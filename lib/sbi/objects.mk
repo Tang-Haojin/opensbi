@@ -25,6 +25,7 @@ libsbi-objs-y += sbi_ecall_replace.o
 libsbi-objs-y += sbi_ecall_vendor.o
 libsbi-objs-y += sbi_emulate_csr.o
 libsbi-objs-y += sbi_fifo.o
+libsbi-objs-y += sbi_fp_emulation.o
 libsbi-objs-y += sbi_hart.o
 libsbi-objs-y += sbi_math.o
 libsbi-objs-y += sbi_hfence.o

@@ -5,11 +5,11 @@
 #
 
 # Compiler pre-processor flags
-platform-cppflags-y =
+platform-cppflags-y = -DSBI_ENABLE_FP_EMULATION
 
 # C Compiler and assembler flags.
-platform-cflags-y =
-platform-asflags-y =
+platform-cflags-y = -DSBI_ENABLE_FP_EMULATION
+platform-asflags-y = -DSBI_ENABLE_FP_EMULATION
 
 # Linker flags: additional libraries and object files that the platform
 # code needs can be added here
@@ -42,5 +42,5 @@ else
   FW_PAYLOAD_OFFSET=0x200000
 endif
 FW_PAYLOAD_ALIGN=0x1000
-FW_PAYLOAD_PATH=$(HOME)/linux/arch/riscv/boot/Image
+FW_PAYLOAD_PATH?=$(HOME)/Image
 FW_PAYLOAD_FDT_ADDR=0x82200000

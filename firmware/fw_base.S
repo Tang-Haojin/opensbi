@@ -619,7 +619,6 @@ fw_platform_init:
 
 .macro	TRAP_SAVE_GENERAL_REGS_EXCEPT_SP_T0
 	/* Save all general regisers except SP and T0 */
-	REG_S	zero, SBI_TRAP_REGS_OFFSET(zero)(sp)
 	REG_S	ra, SBI_TRAP_REGS_OFFSET(ra)(sp)
 	REG_S	gp, SBI_TRAP_REGS_OFFSET(gp)(sp)
 	REG_S	tp, SBI_TRAP_REGS_OFFSET(tp)(sp)
@@ -649,6 +648,11 @@ fw_platform_init:
 	REG_S	t4, SBI_TRAP_REGS_OFFSET(t4)(sp)
 	REG_S	t5, SBI_TRAP_REGS_OFFSET(t5)(sp)
 	REG_S	t6, SBI_TRAP_REGS_OFFSET(t6)(sp)
+
+#ifndef __riscv_flen
+	lw	tp, SBI_TRAP_REGS_OFFSET(zero)(sp) # Move the emulated FCSR from x0's save slot into tp.
+#endif
+	REG_S	zero, SBI_TRAP_REGS_OFFSET(zero)(sp) # Zero x0's save slot.
 .endm
 
 .macro	TRAP_CALL_C_ROUTINE
@@ -658,6 +662,9 @@ fw_platform_init:
 .endm
 
 .macro	TRAP_RESTORE_GENERAL_REGS_EXCEPT_A0_T0
+#ifndef __riscv_flen
+	sw tp, SBI_TRAP_REGS_OFFSET(zero)(a0)
+#endif
 	/* Restore all general regisers except A0 and T0 */
 	REG_L	ra, SBI_TRAP_REGS_OFFSET(ra)(a0)
 	REG_L	sp, SBI_TRAP_REGS_OFFSET(sp)(a0)

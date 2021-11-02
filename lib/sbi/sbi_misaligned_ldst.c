@@ -10,6 +10,7 @@
 #include <sbi/riscv_asm.h>
 #include <sbi/riscv_encoding.h>
 #include <sbi/riscv_fp.h>
+#include <sbi/sbi_fp_emulation.h>
 #include <sbi/sbi_error.h>
 #include <sbi/sbi_misaligned_ldst.h>
 #include <sbi/sbi_pmu.h>
@@ -62,7 +63,7 @@ int sbi_misaligned_load_handler(ulong addr, ulong tval2, ulong tinst,
 	} else if ((insn & INSN_MASK_LWU) == INSN_MATCH_LWU) {
 		len = 4;
 #endif
-#ifdef __riscv_flen
+#if defined __riscv_flen || defined SBI_ENABLE_FP_EMULATION
 	} else if ((insn & INSN_MASK_FLD) == INSN_MATCH_FLD) {
 		fp  = 1;
 		len = 8;
@@ -93,7 +94,7 @@ int sbi_misaligned_load_handler(ulong addr, ulong tval2, ulong tinst,
 		   ((insn >> SH_RD) & 0x1f)) {
 		len   = 4;
 		shift = 8 * (sizeof(ulong) - len);
-#ifdef __riscv_flen
+#if defined __riscv_flen || defined SBI_ENABLE_FP_EMULATION
 	} else if ((insn & INSN_MASK_C_FLD) == INSN_MATCH_C_FLD) {
 		fp   = 1;
 		len  = 8;
@@ -132,7 +133,7 @@ int sbi_misaligned_load_handler(ulong addr, ulong tval2, ulong tinst,
 
 	if (!fp)
 		SET_RD(insn, regs, ((long)(val.data_ulong << shift)) >> shift);
-#ifdef __riscv_flen
+#if defined __riscv_flen || defined SBI_ENABLE_FP_EMULATION
 	else if (len == 8)
 		SET_F64_RD(insn, regs, val.data_u64);
 	else
@@ -182,7 +183,7 @@ int sbi_misaligned_store_handler(ulong addr, ulong tval2, ulong tinst,
 	} else if ((insn & INSN_MASK_SD) == INSN_MATCH_SD) {
 		len = 8;
 #endif
-#ifdef __riscv_flen
+#if defined __riscv_flen || defined SBI_ENABLE_FP_EMULATION
 	} else if ((insn & INSN_MASK_FSD) == INSN_MATCH_FSD) {
 		len	     = 8;
 		val.data_u64 = GET_F64_RS2(insn, regs);
@@ -208,7 +209,7 @@ int sbi_misaligned_store_handler(ulong addr, ulong tval2, ulong tinst,
 		   ((insn >> SH_RD) & 0x1f)) {
 		len	       = 4;
 		val.data_ulong = GET_RS2C(insn, regs);
-#ifdef __riscv_flen
+#if defined __riscv_flen || defined SBI_ENABLE_FP_EMULATION
 	} else if ((insn & INSN_MASK_C_FSD) == INSN_MATCH_C_FSD) {
 		len	     = 8;
 		val.data_u64 = GET_F64_RS2S(insn, regs);

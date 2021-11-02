@@ -3,9 +3,12 @@
 *.a
 *.dep
 
-#Build & install directories
+# Build & install directories
 build/
 install/
 
 # Development friendly files
 tags
+
+# vscode
+.vscode/

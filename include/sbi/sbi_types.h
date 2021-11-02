@@ -44,7 +44,9 @@ typedef unsigned long long	uint64_t;
 #error "Unexpected __riscv_xlen"
 #endif
 
+#ifndef bool
 typedef int			bool;
+#endif
 typedef unsigned long		ulong;
 typedef unsigned long		uintptr_t;
 typedef unsigned long		size_t;
@@ -54,10 +56,18 @@ typedef unsigned long		virtual_size_t;
 typedef unsigned long		physical_addr_t;
 typedef unsigned long		physical_size_t;
 
+#ifndef TRUE
 #define TRUE			1
+#endif
+#ifndef FALSE
 #define FALSE			0
+#endif
+#ifndef true
 #define true			TRUE
+#endif
+#ifndef false
 #define false			FALSE
+#endif
 
 #define NULL			((void *)0)
 

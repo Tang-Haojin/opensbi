@@ -15,13 +15,14 @@
 	compatible = "riscv,yuquan";
 
 	chosen {
-        // bootargs = "earlycon=sbi";
+        // bootargs = "root=/dev/mmcblk0p1 rootfstype=ext4 ro rootwait earlycon=sbi console=ttyS0";
+        bootargs = "earlycon=sbi console=ttyS0";
 		linux,stdout-path = &uart0;
 	};
 
 	memory@80000000 {
 		device_type = "memory";
-		reg = <0x80000000 0x8000000>;
+		reg = <0x80000000 0x40000000>;
 	};
 
 	cpus {
@@ -34,9 +35,13 @@
 			clock-frequency = <100000000>;
 			i-cache-size = <4096>;
 			d-cache-size = <4096>;
+			i-cache-block-size = <16>;
+			d-cache-block-size = <16>;
+			i-cache-sets = <64>;
+			d-cache-sets = <64>;
 			mmu-type = "riscv,sv39";
 			reg = <0>;
-			riscv,isa = "rv64imac";
+			riscv,isa = "rv64imafdc";
 			status = "okay";
 			cpu0_intc: interrupt-controller {
 				#interrupt-cells = <1>;
@@ -76,5 +81,10 @@
 			interrupts-extended = <&cpu0_intc 7 &cpu0_intc 3>; // machine timer/software interrupt
 			reg = <0x2000000 0x10000>;
 		};
+
+		//sdhci: mmc@2020000 {
+		//	compatible = "nemu-sdhost";
+		//	reg = <0x2020000 0x1000>;
+		//};
 	};
 };
