@@ -1,90 +1,64 @@
-/*
- * SPDX-License-Identifier: BSD-2-Clause
- *
- * Copyright (c) 2019 Western Digital Corporation or its affiliates.
- *
- * Authors:
- *   Damien Le Moal <damien.lemoal@wdc.com>
- */
-
 /dts-v1/;
+
 / {
-	#address-cells = <1>;
-	#size-cells = <1>;
-	model = "YuQuan Alpha SoC";
-	compatible = "riscv,yuquan";
-
-	chosen {
-        // bootargs = "root=/dev/mmcblk0p1 rootfstype=ext4 ro rootwait earlycon=sbi console=ttyS0";
-        bootargs = "earlycon=sbi console=ttyS0";
-		linux,stdout-path = &uart0;
-	};
-
-	memory@80000000 {
-		device_type = "memory";
-		reg = <0x80000000 0x40000000>;
-	};
-
-	cpus {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		timebase-frequency = <100000000>;
-		cpu0: cpu@0 {
-			device_type = "cpu";
-			compatible = "riscv";
-			clock-frequency = <100000000>;
-			i-cache-size = <4096>;
-			d-cache-size = <4096>;
-			i-cache-block-size = <16>;
-			d-cache-block-size = <16>;
-			i-cache-sets = <64>;
-			d-cache-sets = <64>;
-			mmu-type = "riscv,sv39";
-			reg = <0>;
-			riscv,isa = "rv64imafdc";
-			status = "okay";
-			cpu0_intc: interrupt-controller {
-				#interrupt-cells = <1>;
-				compatible = "riscv,cpu-intc";
-				interrupt-controller;
-			};
-		};
-	};
-
-	soc {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "simple-bus";
-		ranges;
-		interrupt-parent = <&plic>;
-
-		plic: interrupt-controller@c000000 {
-			#interrupt-cells = <1>;
-			compatible = "sifive,plic-1.0.0";
-			riscv,ndev = <56>;
-			interrupt-controller;
-			interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>; // machine/supervisor external interrupt
-			reg = <0xc000000 0x4000000>;
-		};
-
-		uart0: uart0@10000000 {
-			compatible = "ns16550";
-			interrupts = <10>;
-			interrupt-parent = <&plic>;
-			current-speed = <115200>;
-			clock-frequency = <100000000>;
-			reg = <0x10000000 0x1000>;
-		};
-
-		clint: clint@2000000 {
-			compatible = "sifive,clint0";
-			interrupts-extended = <&cpu0_intc 7 &cpu0_intc 3>; // machine timer/software interrupt
-			reg = <0x2000000 0x10000>;
-		};
-
-		//sdhci: mmc@2020000 {
-		//	compatible = "nemu-sdhost";
-		//	reg = <0x2020000 0x1000>;
-		//};
-	};
+  #address-cells = <0x00000002>;
+  #size-cells = <0x00000002>;
+  compatible = "riscv-virtio";
+  model = "YuQuan Alpha SoC";
+  chosen {
+    bootargs = "earlycon=sbi console=hvc0 systemd.random_seed=aSPvs+nEDm7RH0olYYcl0kPwMj9rINicaYtMT/KlltR1zc1HC0VIYXbSSM5HcFcK3mmBiS+YOZW3GWfv86m34sAGZt34094laQ6ZfjKilhwfG4ERV/gdgPmM/CDfRFXogP9pfKu38voC3yw4CQG4Jn7TQIeAAkiHe2fRXQzr9877HNNTNUA4N42Xlydl26eYQebMDVSf34tyTp5EvagC8zfNWMvJ4rg1Y2bACVlCuepjydVQfdtRM1kKHzwFdq3N1Xf4Y0BjBXfTq5oTuTchYwwed1pGUTDjESe6idnprFIPpqGHagytvZjLQvYyJxpGYsNmx8h7yDysy2m0IdKnqcP6DEYnw6ENHwLE0hlngyvXNJsgSk+gMJ82mGb97xv7R/WMpC2x07hKUYm9mo4uwAlYmmt9Y3qgUZfPemR0O4KeT4f6IlCjNBZPMs+vBidhOcrWhAMKe9RnBhklN6Ya5SMYR25GfrAgZKxqvKvrfTRNVV4yzC01fs/ScfOAsF4k+dkATlHzNVeR23SBkMVvjiFzwovqOcIzqdbVebo5eSzIMcO7aiTK3bNGg2cR9H50z1SXdIN6fB4lqTrZnI/aCH+q2rAtgKvkt6WjHd0b+26llJGKhTQE7EHDErMgrkXAv679GR5SSZrPGZ9fXQ2OaQ4y6rkisHffy+EPlADP6oA=";
+    stdout-path = &uart0;
+  };
+  memory@80000000 {
+    device_type = "memory";
+    reg = <0x00000000 0x80000000 0x00000000 0x40000000>;
+  };
+  cpus {
+    #address-cells = <0x00000001>;
+    #size-cells = <0x00000000>;
+    timebase-frequency = <0x00989680>;
+    cpu@0 {
+      phandle = <0x00000001>;
+      device_type = "cpu";
+      reg = <0x00000000>;
+      status = "okay";
+      compatible = "riscv";
+      riscv,isa = "rv64imafdc";
+      mmu-type = "riscv,sv39";
+      cpu0_intc: interrupt-controller {
+        #interrupt-cells = <0x00000001>;
+        interrupt-controller;
+        compatible = "riscv,cpu-intc";
+        phandle = <0x00000002>;
+      };
+    };
+  };
+  soc {
+    #address-cells = <0x00000002>;
+    #size-cells = <0x00000002>;
+    compatible = "simple-bus";
+    ranges;
+    uart0: uart@10000000 {
+      interrupts = <0x0000000a>;
+      interrupt-parent = <0x00000003>;
+      clock-frequency = <0x00384000>;
+      reg = <0x00000000 0x10000000 0x00000000 0x00000100>;
+      compatible = "ns16550";
+    };
+    plic@c000000 {
+      phandle = <0x00000003>;
+      riscv,ndev = <0x00000035>;
+      reg = <0x00000000 0x0c000000 0x00000000 0x00210000>;
+      interrupts-extended = <&cpu0_intc 0x0000000b &cpu0_intc 0x00000009>;
+      interrupt-controller;
+      compatible = "sifive,plic-1.0.0";
+      #interrupt-cells = <0x00000001>;
+      #address-cells = <0x00000000>;
+    };
+    clint@2000000 {
+      interrupts-extended = <&cpu0_intc 0x00000003 &cpu0_intc 0x00000007>;
+      reg = <0x00000000 0x02000000 0x00000000 0x00010000>;
+      compatible = "sifive,clint0";
+    };
+  };
 };
