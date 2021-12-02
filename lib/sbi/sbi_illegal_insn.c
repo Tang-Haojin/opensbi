@@ -257,6 +257,7 @@ int emulate_rvc(ulong insn, ulong tval2, ulong tinst,
 
 		return truly_illegal_insn(insn, regs);
 
+#ifdef __riscv_compressed
 	if (uptrap.cause) {
 		uptrap.epc = regs->mepc;
 		return sbi_trap_redirect(regs, &uptrap);
@@ -265,6 +266,7 @@ int emulate_rvc(ulong insn, ulong tval2, ulong tinst,
 	regs->mepc += 2;
 
 	return 0;
+#endif
 }
 
 static illegal_insn_func illegal_insn_table[32] = {
