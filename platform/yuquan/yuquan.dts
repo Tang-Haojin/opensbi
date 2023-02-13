@@ -4,19 +4,19 @@
   #address-cells = <0x00000002>;
   #size-cells = <0x00000002>;
   compatible = "riscv-virtio";
-  model = "YuQuan Alpha SoC";
+  model = "YSYX3";
   chosen {
     bootargs = "earlycon=sbi console=hvc0 systemd.random_seed=aSPvs+nEDm7RH0olYYcl0kPwMj9rINicaYtMT/KlltR1zc1HC0VIYXbSSM5HcFcK3mmBiS+YOZW3GWfv86m34sAGZt34094laQ6ZfjKilhwfG4ERV/gdgPmM/CDfRFXogP9pfKu38voC3yw4CQG4Jn7TQIeAAkiHe2fRXQzr9877HNNTNUA4N42Xlydl26eYQebMDVSf34tyTp5EvagC8zfNWMvJ4rg1Y2bACVlCuepjydVQfdtRM1kKHzwFdq3N1Xf4Y0BjBXfTq5oTuTchYwwed1pGUTDjESe6idnprFIPpqGHagytvZjLQvYyJxpGYsNmx8h7yDysy2m0IdKnqcP6DEYnw6ENHwLE0hlngyvXNJsgSk+gMJ82mGb97xv7R/WMpC2x07hKUYm9mo4uwAlYmmt9Y3qgUZfPemR0O4KeT4f6IlCjNBZPMs+vBidhOcrWhAMKe9RnBhklN6Ya5SMYR25GfrAgZKxqvKvrfTRNVV4yzC01fs/ScfOAsF4k+dkATlHzNVeR23SBkMVvjiFzwovqOcIzqdbVebo5eSzIMcO7aiTK3bNGg2cR9H50z1SXdIN6fB4lqTrZnI/aCH+q2rAtgKvkt6WjHd0b+26llJGKhTQE7EHDErMgrkXAv679GR5SSZrPGZ9fXQ2OaQ4y6rkisHffy+EPlADP6oA=";
     stdout-path = &uart0;
   };
   memory@80000000 {
     device_type = "memory";
-    reg = <0x00000000 0x80000000 0x00000000 0x40000000>;
+    reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
   };
   cpus {
     #address-cells = <0x00000001>;
     #size-cells = <0x00000000>;
-    timebase-frequency = <0x00989680>;
+    timebase-frequency = <25000000>;
     cpu@0 {
       phandle = <0x00000001>;
       device_type = "cpu";
@@ -41,7 +41,7 @@
     uart0: uart@10000000 {
       interrupts = <0x0000000a>;
       interrupt-parent = <0x00000003>;
-      clock-frequency = <0x00384000>;
+      clock-frequency = <25000000>;
       reg = <0x00000000 0x10000000 0x00000000 0x00000100>;
       compatible = "ns16550";
     };
