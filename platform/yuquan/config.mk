@@ -36,9 +36,9 @@ FW_JUMP=y
 FW_TEXT_START=0x80200000
 ifeq ($(PLATFORM_RISCV_XLEN), 32)
 # This needs to be 4MB aligned for 32-bit support
-  FW_JUMP_ADDR=0xA0400000
+  FW_JUMP_ADDR=0x82000000
 else
 # This needs to be 2MB aligned for 64-bit support
-  FW_JUMP_ADDR=0xA0200000
+  FW_JUMP_ADDR=0x82000000
 endif
-FW_JUMP_FDT_ADDR=0x82200000
+FW_JUMP_FDT_ADDR=0xA0000000

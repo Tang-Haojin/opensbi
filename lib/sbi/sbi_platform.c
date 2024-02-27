@@ -38,7 +38,7 @@ void sbi_platform_get_features_str(const struct sbi_platform *plat,
 
 	if (!plat || !features_str || !nfstr)
 		return;
-	sbi_memset(features_str, 0, nfstr);
+	memset(features_str, 0, nfstr);
 
 	features = sbi_platform_get_features(plat);
 	if (!features)
@@ -69,7 +69,7 @@ done:
 	if (offset)
 		features_str[offset - 1] = '\0';
 	else
-		sbi_strncpy(features_str, "none", nfstr);
+		strncpy(features_str, "none", nfstr);
 }
 
 u32 sbi_platform_hart_index(const struct sbi_platform *plat, u32 hartid)

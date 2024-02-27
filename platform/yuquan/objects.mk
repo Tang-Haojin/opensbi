@@ -12,4 +12,4 @@ platform-objs-y += platform.o
 # the device tree compiled file should be specified here. The device tree
 # source file be in the form <dt file name>.dts
 #
-platform-objs-y += yuquan.o
+# platform-objs-y += yuquan.o

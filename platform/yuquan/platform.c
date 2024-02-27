@@ -24,53 +24,7 @@
 #include <sbi_utils/timer/fdt_timer.h>
 #include <sbi_utils/timer/aclint_mtimer.h>
 
-extern struct sbi_platform platform;
-extern const char dt_start[];
-
 static u32 generic_hart_index2id[SBI_HARTMASK_MAX_BITS] = { 0 };
-
-unsigned long fw_platform_init(unsigned long arg0, unsigned long arg1,
-				unsigned long arg2, unsigned long arg3,
-				unsigned long arg4)
-{
-	arg1 = (unsigned long)&dt_start[0];
-	const char *model;
-	void *fdt = (void *)arg1;
-	u32 hartid, hart_count = 0;
-	int rc, root_offset, cpus_offset, cpu_offset, len;
-
-	root_offset = fdt_path_offset(fdt, "/");
-	if (root_offset < 0)
-		goto fail;
-
-	model = fdt_getprop(fdt, root_offset, "model", &len);
-	if (model)
-		sbi_strncpy(platform.name, model, sizeof(platform.name) - 1);
-
-	cpus_offset = fdt_path_offset(fdt, "/cpus");
-	if (cpus_offset < 0)
-		goto fail;
-
-	fdt_for_each_subnode(cpu_offset, fdt, cpus_offset) {
-		rc = fdt_parse_hart_id(fdt, cpu_offset, &hartid);
-		if (rc)
-			continue;
-
-		if (SBI_HARTMASK_MAX_BITS <= hartid)
-			continue;
-
-		generic_hart_index2id[hart_count++] = hartid;
-	}
-
-	platform.hart_count = hart_count;
-
-	/* Return original FDT pointer */
-	return arg1;
-
-fail:
-	while (1)
-		wfi();
-}
 
 static int yuquan_early_init(bool cold_boot)
 {
@@ -94,9 +48,10 @@ const struct sbi_platform_operations platform_ops = {
 	.timer_exit   = fdt_timer_exit
 };
 
-struct sbi_platform platform = {
+const struct sbi_platform platform = {
 	.opensbi_version   = OPENSBI_VERSION,
 	.platform_version  = SBI_PLATFORM_VERSION(0x0, 0x00),
+	.name              = "YSYX3",
 	.features          = SBI_PLATFORM_DEFAULT_FEATURES,
 	.hart_count        = 1,
 	.hart_index2id     = generic_hart_index2id,

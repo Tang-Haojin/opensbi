@@ -79,7 +79,7 @@ done:
 			if (!rscratch)
 				continue;
 			ptr = sbi_scratch_offset_ptr(rscratch, ret);
-			sbi_memset(ptr, 0, size);
+			memset(ptr, 0, size);
 		}
 	}
 

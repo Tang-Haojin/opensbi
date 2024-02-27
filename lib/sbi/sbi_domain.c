@@ -69,7 +69,7 @@ static void domain_memregion_initfw(struct sbi_domain_memregion *reg)
 	if (!reg)
 		return;
 
-	sbi_memcpy(reg, &root_fw_region, sizeof(*reg));
+	memcpy(reg, &root_fw_region, sizeof(*reg));
 }
 
 void sbi_domain_memregion_init(unsigned long addr,
@@ -267,9 +267,9 @@ static int sanitize_domain(const struct sbi_platform *plat,
 			if (!is_region_before(reg1, reg))
 				continue;
 
-			sbi_memcpy(&treg, reg1, sizeof(treg));
-			sbi_memcpy(reg1, reg, sizeof(treg));
-			sbi_memcpy(reg, &treg, sizeof(treg));
+			memcpy(&treg, reg1, sizeof(treg));
+			memcpy(reg1, reg, sizeof(treg));
+			memcpy(reg, &treg, sizeof(treg));
 		}
 	}
 
@@ -477,7 +477,7 @@ int sbi_domain_root_add_memregion(const struct sbi_domain_memregion *reg)
 
 	/* Append the memregion to root memregions */
 	nreg = &root_memregs[root_memregs_count];
-	sbi_memcpy(nreg, reg, sizeof(*reg));
+	memcpy(nreg, reg, sizeof(*reg));
 	root_memregs_count++;
 	root_memregs[root_memregs_count].order = 0;
 
@@ -506,7 +506,7 @@ int sbi_domain_root_add_memregion(const struct sbi_domain_memregion *reg)
 				nreg->order++;
 				while (nreg1->order) {
 					nreg2 = nreg1 + 1;
-					sbi_memcpy(nreg1, nreg2, sizeof(*nreg1));
+					memcpy(nreg1, nreg2, sizeof(*nreg1));
 					nreg1++;
 				}
 				reg_merged = true;

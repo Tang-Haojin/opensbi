@@ -696,7 +696,7 @@ static void pmu_reset_event_map(u32 hartid)
 	for (j = 3; j < total_ctrs; j++)
 		active_events[hartid][j] = SBI_PMU_EVENT_IDX_INVALID;
 	for (j = 0; j < SBI_PMU_FW_CTR_MAX; j++)
-		sbi_memset(&fw_event_map[hartid][j], 0,
+		memset(&fw_event_map[hartid][j], 0,
 			   sizeof(struct sbi_pmu_fw_event));
 }
 

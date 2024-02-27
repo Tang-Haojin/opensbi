@@ -308,7 +308,7 @@ void sbi_hart_get_features_str(struct sbi_scratch *scratch,
 
 	if (!features_str || nfstr <= 0)
 		return;
-	sbi_memset(features_str, 0, nfstr);
+	memset(features_str, 0, nfstr);
 
 	features = hart_get_features(scratch);
 	if (!features)
@@ -320,7 +320,7 @@ void sbi_hart_get_features_str(struct sbi_scratch *scratch,
 			if (temp) {
 				sbi_snprintf(features_str + offset, nfstr,
 					     "%s,", temp);
-				offset = offset + sbi_strlen(temp) + 1;
+				offset = offset + strlen(temp) + 1;
 			}
 		}
 		feat = feat << 1;
@@ -330,7 +330,7 @@ done:
 	if (offset)
 		features_str[offset - 1] = '\0';
 	else
-		sbi_strncpy(features_str, "none", nfstr);
+		strncpy(features_str, "none", nfstr);
 }
 
 static unsigned long hart_pmp_get_allowed_addr(void)
